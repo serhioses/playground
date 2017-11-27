@@ -45,20 +45,30 @@
       theta = Math.PI + (Math.PI - Math.abs(theta));
     }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    circle();
-
-    ctx.strokeStyle = 'orange';
+    // circle();
 
     for (let j = 0; j < segments; j += 1) {
       if (theta > store.segments[j].endAngle - gap) {
         ctx.beginPath();
+        ctx.strokeStyle = 'orange';
         ctx.lineWidth = 10;
         ctx.arc(150, 150, 145, store.segments[j].startAngle + gap, store.segments[j].endAngle - gap);
         ctx.stroke();
       } else if (theta > store.segments[j].startAngle + gap && theta < store.segments[j].endAngle - gap) {
         ctx.beginPath();
+        ctx.strokeStyle = 'orange';
         ctx.lineWidth = 10;
         ctx.arc(150, 150, 145, store.segments[j].startAngle + gap, theta);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.strokeStyle = colors[j];
+        ctx.arc(150, 150, 145, theta, store.segments[j].endAngle - gap);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.strokeStyle = colors[j];
+        ctx.arc(150, 150, 145, store.segments[j].startAngle + gap, store.segments[j].endAngle - gap);
         ctx.stroke();
       }
     }
