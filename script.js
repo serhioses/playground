@@ -16,6 +16,16 @@
   endAngle = 2 * Math.PI / segments;
   step = endAngle;
 
+  // for (let i = -90; i <= 270; i += 0.1) {
+  //   let rad = i * Math.PI / 180;
+
+  //   ctx.beginPath();
+  //   ctx.strokeStyle = 'hsl(' + (i + 90) + ', 100%, 50%)';
+  //   ctx.moveTo(150, 150);
+  //   ctx.lineTo(150 + 150 * Math.cos(rad), 150 + 150 * Math.sin(rad));
+  //   ctx.stroke();
+  // }
+
   function circle () {
     for (let i = 1; i <= segments; i += 1) {
       ctx.beginPath();
