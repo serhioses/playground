@@ -107,79 +107,180 @@
 // }());
 
 // Line motion
+// (function () {
+//   var canvas = document.getElementById('canvas'),
+//     ctx = canvas.getContext('2d'),
+//     colors = ['green', 'red', 'blue', 'yellow', 'purple', 'magenta', 'brown'],
+//     requestId;
+
+//   function rand (min, max) {
+//     return Math.floor(Math.random() * (max - min + 1) + min);
+//   }
+
+//   function animate (options) {
+//     var start = window.performance.now();
+
+//     requestAnimationFrame(function animate (time) {
+//       var timeFraction = (time - start) / options.duration,
+//         progress;
+
+//       if (timeFraction > 1) {
+//         timeFraction = 1;
+//       }
+//       if (timeFraction < 0) {
+//         timeFraction = 0;
+//       }
+
+//       progress = options.timing(timeFraction);
+
+//       options.draw(progress);
+
+//       if (timeFraction < 1) {
+//         requestAnimationFrame(animate);
+//       }
+//     });
+//   }
+//   // console.log(rand(1, 2));
+
+//   // canvas.addEventListener('mousemove', function (e) {
+//   //   var x = e.pageX, y = e.pageY, t = y;
+
+//   //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+//   //   ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+//   //   ctx.beginPath();
+//   //   ctx.moveTo(canvas.width, 0);
+//   //   ctx.lineTo(x, y);
+//   //   ctx.stroke();
+
+//   //   ctx.beginPath();
+//   //   ctx.moveTo(0, canvas.height);
+//   //   ctx.lineTo(x, y);
+//   //   ctx.stroke();
+//   // }, false);
+
+//   canvas.addEventListener('click', function (e) {
+//     var s = 0;
+
+//     animate({
+//       duration: 2000,
+//       timing(timeFraction) {
+//         for (var a = 0, b = 1, result; 1; a += b, b /= 2) {
+//           if (timeFraction >= (7 - 4 * a) / 11) {
+//             return -Math.pow((11 - 6 * a - 11 * timeFraction) / 4, 2) + Math.pow(b, 2);
+//           }
+//         }
+//       },
+//       draw(progress) {
+//         ctx.clearRect(0, 0, canvas.width, canvas.height);
+//         ctx.beginPath();
+//         // console.log(progress);
+//         ctx.arc(300, 300, 260, 0, Math.PI * 2 * progress);
+//         ctx.lineWidth = 20;
+//         ctx.strokeStyle = 'hsl(' + (360 * progress) + ', 100%, 50%)';
+//         ctx.stroke();
+//       }
+//     });
+//   }, false);
+// }());
+
+// Mouse move rect
 (function () {
-  var canvas = document.getElementById('canvas'),
-    ctx = canvas.getContext('2d'),
-    colors = ['green', 'red', 'blue', 'yellow', 'purple', 'magenta', 'brown'],
-    requestId;
+  var startX, startY, currentX, currentY, rect,
+    ratio = 1;
 
-  function rand (min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
+  function drawRect (e) {
+    var top, left, w, h;
+
+    if (rect) {
+      document.body.removeChild(rect);
+      rect = null;
+    }
+
+    rect = document.createElement('div');
+    rect.className = 'rect';
+
+    currentX = e.pageX;
+    currentY = e.pageY;
+
+    w = Math.abs(currentX - startX);
+
+    if (currentY < startY) {
+      if (typeof ratio === 'number') {
+
+        top = startY - w / ratio;
+        h = startY - top;
+      } else {
+        top = currentY;
+        h = startY - currentY;
+      }
+    } else {
+      top = startY;
+      if (typeof ratio === 'number') {
+        h = Math.abs(currentX - startX) / ratio;
+      } else {
+        h = currentY - startY;
+      }
+    }
+
+    left = (currentX < startX) ? currentX : startX;
+    // if (currentX < startX) {
+    //   left = currentX;
+    // } else {
+    //   left = startX;
+    // }
+    
+
+    rect.style.top = top + 'px';
+    rect.style.left = left + 'px';
+    rect.style.width = w + 'px';
+    rect.style.height = h + 'px';
+
+    document.body.appendChild(rect);
   }
 
-  function animate (options) {
-    var start = window.performance.now();
+  document.body.addEventListener('mousedown', function (e) {
+    startX = e.pageX;
+    startY = e.pageY;
 
-    requestAnimationFrame(function animate (time) {
-      var timeFraction = (time - start) / options.duration,
-        progress;
+    document.body.addEventListener('mousemove', drawRect, false);
+  }, false);
 
-      if (timeFraction > 1) {
-        timeFraction = 1;
-      }
-      if (timeFraction < 0) {
-        timeFraction = 0;
-      }
+  document.body.addEventListener('mouseup', function (e) {
+    var img, croppedImg, top, left, w, h, radius, styles,
+      canvas, ctx;
 
-      progress = options.timing(timeFraction);
+    this.removeEventListener('mousemove', drawRect);
 
-      options.draw(progress);
+    if (!rect) {
+      return;
+    }
 
-      if (timeFraction < 1) {
-        requestAnimationFrame(animate);
-      }
-    });
-  }
-  // console.log(rand(1, 2));
+    img = document.getElementById('img');
 
-  // canvas.addEventListener('mousemove', function (e) {
-  //   var x = e.pageX, y = e.pageY, t = y;
+    styles = getComputedStyle(rect);
+    top = parseInt(styles.top, 10);
+    left = parseInt(styles.left, 10);
+    w = parseInt(styles.width, 10);
+    h = parseInt(styles.height, 10);
+    radius = styles.borderRadius;
 
-  //   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  //   ctx.strokeRect(0, 0, canvas.width, canvas.height);
+    canvas = document.createElement('canvas');
+    ctx = canvas.getContext('2d');
 
-  //   ctx.beginPath();
-  //   ctx.moveTo(canvas.width, 0);
-  //   ctx.lineTo(x, y);
-  //   ctx.stroke();
+    canvas.width = w;
+    canvas.height = h;
 
-  //   ctx.beginPath();
-  //   ctx.moveTo(0, canvas.height);
-  //   ctx.lineTo(x, y);
-  //   ctx.stroke();
-  // }, false);
+    if (radius === '100%') {
+      ctx.beginPath();
+      ctx.arc(w / 2, h / 2, w / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+    }
 
-  canvas.addEventListener('click', function (e) {
-    var s = 0;
+    document.body.appendChild(canvas);
+    ctx.drawImage(img, left * (img.naturalWidth / img.width), top * (img.naturalHeight / img.height), w * (img.naturalWidth / img.width), h * (img.naturalHeight / img.height), 0, 0, w, h);
 
-    animate({
-      duration: 2000,
-      timing(timeFraction) {
-        for (var a = 0, b = 1, result; 1; a += b, b /= 2) {
-          if (timeFraction >= (7 - 4 * a) / 11) {
-            return -Math.pow((11 - 6 * a - 11 * timeFraction) / 4, 2) + Math.pow(b, 2);
-          }
-        }
-      },
-      draw(progress) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.beginPath();
-        // console.log(progress);
-        ctx.arc(300, 300, 260, 0, Math.PI * 2 * progress);
-        ctx.lineWidth = 20;
-        ctx.strokeStyle = 'hsl(' + (360 * progress) + ', 100%, 50%)';
-        ctx.stroke();
-      }
-    });
+
   }, false);
 }());
