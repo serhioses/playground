@@ -185,102 +185,286 @@
 // }());
 
 // Mouse move rect
-(function () {
-  var startX, startY, currentX, currentY, rect,
-    ratio = 1;
+// (function () {
+//   var startX, startY, currentX, currentY, rect,
+//     ratio = 1,
+//     canvas, ctx;
 
-  function drawRect (e) {
-    var top, left, w, h;
+//   function drawRect (e) {
+//     var top, left, w, h;
 
-    if (rect) {
-      document.body.removeChild(rect);
-      rect = null;
-    }
+//     if (rect) {
+//       document.body.removeChild(rect);
+//       rect = null;
+//     }
 
-    rect = document.createElement('div');
-    rect.className = 'rect';
+//     rect = document.createElement('div');
+//     rect.className = 'rect';
 
-    currentX = e.pageX;
-    currentY = e.pageY;
+//     currentX = e.pageX;
+//     currentY = e.pageY;
 
-    w = Math.abs(currentX - startX);
+//     w = Math.abs(currentX - startX);
 
-    if (currentY < startY) {
-      if (typeof ratio === 'number') {
+//     if (currentY < startY) {
+//       if (typeof ratio === 'number') {
 
-        top = startY - w / ratio;
-        h = startY - top;
-      } else {
-        top = currentY;
-        h = startY - currentY;
-      }
-    } else {
-      top = startY;
-      if (typeof ratio === 'number') {
-        h = Math.abs(currentX - startX) / ratio;
-      } else {
-        h = currentY - startY;
-      }
-    }
+//         top = startY - w / ratio;
+//         h = startY - top;
+//       } else {
+//         top = currentY;
+//         h = startY - currentY;
+//       }
+//     } else {
+//       top = startY;
+//       if (typeof ratio === 'number') {
+//         h = Math.abs(currentX - startX) / ratio;
+//       } else {
+//         h = currentY - startY;
+//       }
+//     }
 
-    left = (currentX < startX) ? currentX : startX;
-    // if (currentX < startX) {
-    //   left = currentX;
-    // } else {
-    //   left = startX;
-    // }
+//     left = (currentX < startX) ? currentX : startX;
+//     // if (currentX < startX) {
+//     //   left = currentX;
+//     // } else {
+//     //   left = startX;
+//     // }
     
 
-    rect.style.top = top + 'px';
-    rect.style.left = left + 'px';
-    rect.style.width = w + 'px';
-    rect.style.height = h + 'px';
+//     rect.style.top = top + 'px';
+//     rect.style.left = left + 'px';
+//     rect.style.width = w + 'px';
+//     rect.style.height = h + 'px';
 
-    document.body.appendChild(rect);
-  }
+//     document.body.appendChild(rect);
+//   }
 
-  document.body.addEventListener('mousedown', function (e) {
-    startX = e.pageX;
-    startY = e.pageY;
+//   document.body.addEventListener('mousedown', function (e) {
+//     startX = e.pageX;
+//     startY = e.pageY;
 
-    document.body.addEventListener('mousemove', drawRect, false);
-  }, false);
+//     document.body.addEventListener('mousemove', drawRect, false);
+//   }, false);
 
-  document.body.addEventListener('mouseup', function (e) {
-    var img, croppedImg, top, left, w, h, radius, styles,
-      canvas, ctx;
+//   canvas = document.createElement('canvas');
+//   ctx = canvas.getContext('2d');
 
-    this.removeEventListener('mousemove', drawRect);
+//   canvas.width = 600;
+//   canvas.height = 400;
 
-    if (!rect) {
-      return;
-    }
+//   {
+//     let img = new Image();
+//     img.setAttribute('src', 'img.jpg');
 
-    img = document.getElementById('img');
+//     img.addEventListener('load', function () {
+//       ctx.drawImage(this, 0, 0, this.width, this.height, 0, 0, canvas.width, canvas.height);
 
-    styles = getComputedStyle(rect);
-    top = parseInt(styles.top, 10);
-    left = parseInt(styles.left, 10);
-    w = parseInt(styles.width, 10);
-    h = parseInt(styles.height, 10);
-    radius = styles.borderRadius;
+//       document.body.appendChild(canvas);
+//     });
+//   }
 
-    canvas = document.createElement('canvas');
-    ctx = canvas.getContext('2d');
+//   document.body.addEventListener('mouseup', function (e) {
+//     var croppedImg, top, left, w, h, radius, styles, data;
 
-    canvas.width = w;
-    canvas.height = h;
+//     this.removeEventListener('mousemove', drawRect);
 
-    if (radius === '100%') {
-      ctx.beginPath();
-      ctx.arc(w / 2, h / 2, w / 2, 0, Math.PI * 2);
-      ctx.closePath();
-      ctx.clip();
-    }
+//     if (!rect) {
+//       return;
+//     }
 
-    document.body.appendChild(canvas);
-    ctx.drawImage(img, left * (img.naturalWidth / img.width), top * (img.naturalHeight / img.height), w * (img.naturalWidth / img.width), h * (img.naturalHeight / img.height), 0, 0, w, h);
+//     styles = getComputedStyle(rect);
+//     top = parseInt(styles.top, 10);
+//     left = parseInt(styles.left, 10);
+//     w = parseInt(styles.width, 10);
+//     h = parseInt(styles.height, 10);
+//     radius = styles.borderRadius;
+
+//     data = ctx.getImageData(left, top, w, h);
+//     // ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//     // if (radius === '100%') {
+//     //   ctx.beginPath();
+//     //   ctx.arc(w / 2, h / 2, w / 2, 0, Math.PI * 2);
+//     //   ctx.closePath();
+//     //   ctx.clip();
+//     // }
+
+//     ctx.clearRect(0, 0, canvas.width, canvas.height);
+//     canvas.width = w;
+//     canvas.height = h;
+
+//     if (radius === '100%') {
+//       ctx.putImageData(data, 0, 0);
+
+//       croppedImg = new Image();
+//       croppedImg.setAttribute('src', canvas.toDataURL());
+//       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//       croppedImg.addEventListener('load', function () {
+//         // ctx.save();
+//         ctx.beginPath();
+//         ctx.arc(w / 2, h / 2, w / 2, 0, Math.PI * 2);
+//         // ctx.closePath();
+//         ctx.clip();
+
+//         ctx.drawImage(this, 0, 0);
+
+//         let ci = new Image();
+//         ci.setAttribute('src', canvas.toDataURL());
+//         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//         // Hack for clearing arc area
+//         canvas.width = w;
+//         canvas.height = h;
+//         // ctx.restore();
+//         document.body.appendChild(ci);
+//       });
+//     } else {
+//       ctx.putImageData(data, 0, 0);
+
+//       croppedImg = new Image();
+//       croppedImg.setAttribute('src', canvas.toDataURL());
+//       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//       document.body.appendChild(croppedImg);
+//     }
+    
+//   }, false);
+
+//   // document.body.addEventListener('mouseup', function (e) {
+//   //   var img, croppedImg, top, left, w, h, radius, styles,
+//   //     canvas, ctx;
+
+//   //   this.removeEventListener('mousemove', drawRect);
+
+//   //   if (!rect) {
+//   //     return;
+//   //   }
+
+//   //   img = document.getElementById('img');
+
+//   //   styles = getComputedStyle(rect);
+//   //   top = parseInt(styles.top, 10);
+//   //   left = parseInt(styles.left, 10);
+//   //   w = parseInt(styles.width, 10);
+//   //   h = parseInt(styles.height, 10);
+//   //   radius = styles.borderRadius;
+
+//   //   canvas = document.createElement('canvas');
+//   //   ctx = canvas.getContext('2d');
+
+//   //   canvas.width = w;
+//   //   canvas.height = h;
+
+//   //   if (radius === '100%') {
+//   //     ctx.beginPath();
+//   //     ctx.arc(w / 2, h / 2, w / 2, 0, Math.PI * 2);
+//   //     ctx.closePath();
+//   //     ctx.clip();
+//   //   }
+
+//   //   // document.body.appendChild(canvas);
+//   //   ctx.drawImage(img, left * (img.naturalWidth / img.width), top * (img.naturalHeight / img.height), w * (img.naturalWidth / img.width), h * (img.naturalHeight / img.height), 0, 0, w, h);
+
+//   //   {
+//   //     let img = new Image();
+//   //     img.setAttribute('src', canvas.toDataURL());
+//   //     document.body.appendChild(img);
+//   //   }
+//   // }, false);
+// }());
+
+// (function () {
+//   var canvas = document.createElement('canvas'),
+//     ctx = canvas.getContext('2d');
+
+//   canvas.width = 600;
+//   canvas.height = 400;
 
 
-  }, false);
-}());
+//   // ctx.beginPath();
+//   // ctx.moveTo(canvas.width / 2, 0);
+//   // ctx.lineTo(canvas.width / 2, canvas.height);
+//   // ctx.stroke();
+
+//   // ctx.beginPath();
+//   // ctx.moveTo(0, canvas.height / 2);
+//   // ctx.lineTo(canvas.width, canvas.height / 2);
+//   // ctx.stroke();
+
+//   // ctx.moveTo(canvas.width / 2, canvas.height / 2);
+//   //   ctx.beginPath();
+
+//   // let x = -Math.PI * 2;
+//   // // let t = 0;
+//   // requestAnimationFrame(function animate () {
+//   //   let y = Math.sin(x);
+    
+//   //   // ctx.arc(canvas.width / 2 + x * 10, canvas.height / 2 - y * 10, 10, 0, Math.PI * 2);
+//   //   ctx.lineTo(canvas.width / 2 + x * 100, canvas.height / 2 - y * 100);
+//   //   ctx.stroke();
+//   //   x += 0.1;
+//   //   // t += 1;
+
+//   //   if (x <= Math.PI * 2) {
+//   //     requestAnimationFrame(animate);
+//   //   }
+//   // });
+//   // for (let x = 0; x <= Math.PI * 2; x += 0.01) {
+//   //   let y = Math.sin(x);
+//   //   // console.log(x, y);
+//   //   // ctx.lineTo(canvas.width / 2 + x * 50, canvas.height / 2 - y * 50);
+//   //   ctx.arc(canvas.width / 2 + x * 50, canvas.height / 2 - y * 50, 10, 0, Math.PI * 2);
+    
+//   // }
+//   // ctx.stroke();
+
+//   // ctx.stroke();
+
+//   ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+//   // requestAnimationFrame(function animate () {
+//   //   
+
+//   //   requestAnimationFrame(animate);
+//   // });
+
+//   // function draw(startX, startY, len, angle) {
+//   //   ctx.beginPath();
+//   //   ctx.save();
+    
+//   //   ctx.translate(startX, startY);
+//   //   ctx.rotate(angle * Math.PI/180);
+//   //   ctx.moveTo(0, 0);
+//   //   ctx.lineTo(0, -len);
+//   //   ctx.stroke();
+    
+//   //   if(len < 10) {
+//   //     ctx.restore();
+//   //     return;
+//   //   }
+    
+//   //   requestAnimationFrame(function () {
+//   //     draw(0, -len, len*0.8, -15);
+//   //     ctx.restore();
+//   //   });
+//   //   requestAnimationFrame(function () {
+//   //     draw(0, -len, len*0.8, 15);
+//   //     // ctx.restore();
+//   //   });
+    
+//   // }
+
+//   // draw(200, 400, 80, 0);
+
+//   document.body.appendChild(canvas);
+
+//   function rand (min, max) {
+//     return Math.floor(Math.random() * (max - min + 1) - min);
+//   }
+
+//   function getRandomColor () {
+//     return 'rgb(' + rand(0, 255) + ',' + rand(0, 255) + ',' + rand(0, 255) + ')';
+//   }
+// }());
