@@ -469,163 +469,208 @@
 //   }
 // }());
 
-// Graph
+// Extend
 // (function () {
-//   var canvas = document.createElement('canvas'),
-//     ctx = canvas.getContext('2d');
+//   var obj1, obj2, obj3, obj4;
 
-//   canvas.width = window.innerWidth;
-//   canvas.height = window.innerHeight;
+//   obj1 = {
+//     oranges: 1,
+//     apples: 7,
+//     bananas: 4,
+//     tomatoes: 9,
+//     set: {
+//       pens: 8,
+//       pencils: 10
+//     },
+//     tools: {
+//       bags: 17,
+//       electrical: {
+//         punchers: 1
+//       }
+//     }
+//   };
+//   obj2 = {
+//     cucumbers: 5,
+//     oranges: 2,
+//     lemons: 8,
+//     potatoes: 11,
+//     tomatoes: 15
+//   };
+//   obj3 = {
+//     cucumbers: 14,
+//     set: {
+//       pens: 6
+//     },
+//     tools: {
+//       boxes: 28,
+//       mechanical: {
+//         screwdrivers: 1
+//       }
+//     }
+//   };
+//   obj4 = {
+//     strawberries: 41
+//   };
 
-//   document.body.appendChild(canvas);
-
-//   function Segment (canvas, ctx, data) {
-//     this._canvas = canvas;
-//     this._ctx = ctx;
-//     this.strokeStyle = '#888';
-//     this.fillStyle = '#888';
-
-//     this.data = data;
-
-//     return this;
+//   function getClass(arg) {
+//     return Object.prototype.toString.call(arg).slice(8, -1);
 //   }
 
-//   Segment.prototype.drawSerments = function () {
-//     this._ctx.fillStyle = this.fillStyle;
-//     this._ctx.strokeStyle = this.strokeStyle;
+//   function extend (deep, target, ...sources) {
+//     var stack = [],
+//       start = Date.now();
+    
+//     stack.push(target, sources);
+    
+//     while (stack.length) {
+//       let args = stack.pop(),
+//         o = stack.pop();
+      
+//       for (let i = 0; i < args.length; i += 1) {
+//         Object.keys(args[i]).forEach((key) => {
+//           if (args[i][key] !== target) {
+//             if (!deep) {
+//               o[key] = args[i][key];
+//             } else {
+//               if (getClass(args[i][key]) !== 'Object') {
+//                 o[key] = args[i][key];
+//               } else {
+//                 if (getClass(o[key]) !== 'Object') {
+//                   o[key] = {};
+//                 }
 
-//     this.data.segments.forEach((segment, i) => {
-//       this.drawLine(segment.line);
-
-//       this.drawDot(segment.dot1[0], segment.dot1[1], segment.dot1[2]);
-//       this.drawDot(segment.dot2[0], segment.dot2[1], segment.dot2[2]);
-//     });
-//   };
-
-//   Segment.prototype.drawLine = function (coords) {
-//     this._ctx.beginPath();
-//     this._ctx.moveTo(coords[0], coords[1]);
-//     this._ctx.lineTo(coords[2], coords[3]);
-
-//     this._ctx.stroke();
-//   };
-//   Segment.prototype.drawDot = function (x, y, r) {
-//     this._ctx.beginPath();
-//     this._ctx.arc(x, y, r, 0, Math.PI * 2);
-//     this._ctx.closePath();
-
-//     this._ctx.fill();
-//   };
-
-//   Segment.prototype.findClosest = function (e, exclude) {
-//     var distances = [], closest, idx = exclude ? null : 0;
-
-//     for (let i = 0; i < this.data.segments.length; i += 1) {
-//       let segment = this.data.segments[i],
-//         dot1 = segment.dot1,
-//         dot2 = segment.dot2,
-//         distance1, distance2;
-
-//       if (segment !== exclude) {
-//         distance1 = Math.sqrt(Math.pow((dot1[0] - e.pageX), 2) + Math.pow((dot1[1] - e.pageY), 2));
-//         distance2 = Math.sqrt(Math.pow((dot2[0] - e.pageX), 2) + Math.pow((dot2[1] - e.pageY), 2));
-
-//         if (distance1 > distance2) {
-//           distances.push([distance2, i])
-//         } else {
-//           distances.push([distance1, i]);
-//         }
+//                 stack.push(o[key], [args[i][key]]);
+//               }
+//             }
+//           }
+//         });
+//       }
+      
+//       if (Date.now() - start > 300) {
+//         console.log('loop');
+//         break;
 //       }
 //     }
+    
+    
+//     //console.log(stack);
+//     return target;
+//   }
 
-//     closest = distances[0][0];
-
-//     for (let i = 1; i < distances.length; i += 1) {
-//       if (distances[i][0] < closest) {
-//         closest = distances[i][0];
-//         idx = i;
-//       }
-//     }
-
-//     return this.data.segments[idx];
-//   };
-//   Segment.prototype.findAdjacent = function (segment) {
-//     for (let i = 0; i < this.data.segments.length; i += 1) {
-//       let seg = this.data.segments[i];
-
-//       if (segment !== seg) {
-//         if ((segment.line[0] === seg.line[0] && segment.line[1] === seg.line[1]) ||
-//           (segment.line[2] === seg.line[2] && segment.line[3] === seg.line[3]) ||
-//           (segment.line[0] === seg.line[2] && segment.line[1] === seg.line[3]) ||
-//           (segment.line[2] === seg.line[0] && segment.line[3] === seg.line[1])) {
-//           return seg;
-//         }
-//       }
-//     }
-//   };
-
-//   Segment.prototype.onMouseMove = function (e) {
-//     var closest = this.findClosest(e),
-//       adjacent = this.findClosest(e, closest);
-
-//     this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
-
-//     this._ctx.fillStyle = this.fillStyle;
-//     this._ctx.strokeStyle = this.strokeStyle;
-
-//     this.data.segments.forEach((segment, i) => {
-//       if (segment === closest || segment === adjacent) {
-//         if (1) {
-
-//         } else {
-
-//         }
-//         this.drawLine([e.pageX, e.pageY, segment.line[2], segment.line[3]]);
-
-//         this.drawDot(e.pageX, e.pageY, segment.dot1[2]);
-//         this.drawDot(segment.dot2[0], segment.dot2[1], segment.dot2[2]);
-//       } else {
-//         this.drawLine(segment.line);
-
-//         this.drawDot(segment.dot1[0], segment.dot1[1], segment.dot1[2]);
-//         this.drawDot(segment.dot2[0], segment.dot2[1], segment.dot2[2]);
-//       }
-//     });
-//   };
-
-//   var segment1 = new Segment(canvas, ctx, {
-//     segments: [
-//       {
-//         line: [60, 60, 180, 260],
-//         dot1: [60, 60, 3],
-//         dot2: [180, 260, 3]
-//       },
-//       {
-//         line: [180, 260, 240, 200],
-//         dot1: [180, 260, 3],
-//         dot2: [240, 200, 3]
-//       },
-//       {
-//         line: [240, 200, 60, 60],
-//         dot1: [240, 200, 3],
-//         dot2: [60, 60, 3]
-//       }
-//     ]
-//   });
-//   segment1.drawSerments();
-//   canvas.addEventListener('mousemove', function (e) {
-//     segment1.onMouseMove(e);
-//   }, false);
-
-//   // drawLine([60, 60, 180, 260]);
-//   // drawDot(60, 60, 3);
-//   // drawDot(180, 260, 3);
-
-//   // drawLine([180, 260, 240, 200]);
-//   // drawDot(180, 260, 3);
-//   // drawDot(240, 200, 3);
-
-//   // drawLine([240, 200, 60, 60]);
-
-
+//   console.log(extend(true, obj1, obj2, obj3, obj4));
 // }());
+
+// Images combining
+// (function () {
+//   var sources = ['pcs_map-2(1).png', 'africa.png', 'china.png'],
+//     images = [],
+//     canvas = document.createElement('canvas'),
+//     ctx = canvas.getContext('2d');
+
+
+//   sources.forEach(function (src, i) {
+//     images.push(new Image());
+
+//     images[i].setAttribute('src', src);
+//   });
+
+//   // images.shift().addEventListener('load', function () {
+//   //   canvas.width = this.width;
+//   //   canvas.height = this.height;
+
+//   //   ctx.drawImage(this, 0, 0, this.width, this.height);
+
+//   //   loadImages(images);
+//   // });
+
+//   function loadInitialImage () {
+//     var img = new Image();
+
+//     img.setAttribute('src', sources[0]);
+
+//     img.addEventListener('load', function () {
+//       canvas.width = this.width;
+//       canvas.height = this.height;
+
+//       ctx.drawImage(this, 0, 0, this.width, this.height);
+
+//       loadImages(1);
+//     });
+//   }
+//   loadInitialImage();
+
+//   function loadImages (i) {
+//     var img;
+
+//     if (i >= sources.length) {
+//       draw();
+//       return;
+//     }
+
+//     img = new Image();
+//     img.setAttribute('src', sources[i]);
+//     img.addEventListener('load', function () {
+//       ctx.drawImage(this, 0, 0, this.width, this.height);
+
+//       loadImages(i + 1);
+//     });
+//   }
+
+//   function draw () {
+//     var img = new Image();
+
+//     img.src = canvas.toDataURL();
+
+//     document.body.appendChild(img);
+//   }
+
+  
+// }());
+
+(function () {
+  function romanNumber (number) {
+    var result = '';
+
+    result += (new Array(Math.floor(number / 1000) + 1)).join('M');
+    number %= 1000;
+
+    if (number >= 900) {
+      result += 'CM';
+      number -= 900;
+    } else if (number >= 400 && number < 500) {
+      result += 'CD';
+      number = 500 - number;
+    } else {
+      result += (new Array(Math.floor(number / 500) + 1)).join('D');
+      number %= 500;
+    }
+
+    if (number >= 90) {
+      result += 'XC';
+      number -= 90;
+    } else if (number >= 40 && number < 50) {
+      result += 'XL';
+      number = 50 - number;
+    } else {
+      result += (new Array(Math.floor(number / 100) + 1)).join('C');
+      number %= 100;
+    }
+
+    if (number === 9) {
+      result += 'IX';
+      number -= 9;
+    } else if (number === 4) {
+      result += 'IV';
+      number = 5 - number;
+    } else {
+      result += (new Array(Math.floor(number / 100) + 1)).join('L');
+      number %= 50;
+    }
+
+    result += (new Array(number + 1)).join('I');
+
+    return result;
+  }
+
+  console.log(romanNumber(3999));
+}());
