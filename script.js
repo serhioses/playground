@@ -468,3 +468,209 @@
 //     return 'rgb(' + rand(0, 255) + ',' + rand(0, 255) + ',' + rand(0, 255) + ')';
 //   }
 // }());
+
+// Extend
+// (function () {
+//   var obj1, obj2, obj3, obj4;
+
+//   obj1 = {
+//     oranges: 1,
+//     apples: 7,
+//     bananas: 4,
+//     tomatoes: 9,
+//     set: {
+//       pens: 8,
+//       pencils: 10
+//     },
+//     tools: {
+//       bags: 17,
+//       electrical: {
+//         punchers: 1
+//       }
+//     }
+//   };
+//   obj2 = {
+//     cucumbers: 5,
+//     oranges: 2,
+//     lemons: 8,
+//     potatoes: 11,
+//     tomatoes: 15
+//   };
+//   obj3 = {
+//     cucumbers: 14,
+//     set: {
+//       pens: 6
+//     },
+//     tools: {
+//       boxes: 28,
+//       mechanical: {
+//         screwdrivers: 1
+//       }
+//     }
+//   };
+//   obj4 = {
+//     strawberries: 41
+//   };
+
+//   function getClass(arg) {
+//     return Object.prototype.toString.call(arg).slice(8, -1);
+//   }
+
+//   function extend (deep, target, ...sources) {
+//     var stack = [],
+//       start = Date.now();
+    
+//     stack.push(target, sources);
+    
+//     while (stack.length) {
+//       let args = stack.pop(),
+//         o = stack.pop();
+      
+//       for (let i = 0; i < args.length; i += 1) {
+//         Object.keys(args[i]).forEach((key) => {
+//           if (args[i][key] !== target) {
+//             if (!deep) {
+//               o[key] = args[i][key];
+//             } else {
+//               if (getClass(args[i][key]) !== 'Object') {
+//                 o[key] = args[i][key];
+//               } else {
+//                 if (getClass(o[key]) !== 'Object') {
+//                   o[key] = {};
+//                 }
+
+//                 stack.push(o[key], [args[i][key]]);
+//               }
+//             }
+//           }
+//         });
+//       }
+      
+//       if (Date.now() - start > 300) {
+//         console.log('loop');
+//         break;
+//       }
+//     }
+    
+    
+//     //console.log(stack);
+//     return target;
+//   }
+
+//   console.log(extend(true, obj1, obj2, obj3, obj4));
+// }());
+
+// Images combining
+// (function () {
+//   var sources = ['pcs_map-2(1).png', 'africa.png', 'china.png'],
+//     images = [],
+//     canvas = document.createElement('canvas'),
+//     ctx = canvas.getContext('2d');
+
+
+//   sources.forEach(function (src, i) {
+//     images.push(new Image());
+
+//     images[i].setAttribute('src', src);
+//   });
+
+//   // images.shift().addEventListener('load', function () {
+//   //   canvas.width = this.width;
+//   //   canvas.height = this.height;
+
+//   //   ctx.drawImage(this, 0, 0, this.width, this.height);
+
+//   //   loadImages(images);
+//   // });
+
+//   function loadInitialImage () {
+//     var img = new Image();
+
+//     img.setAttribute('src', sources[0]);
+
+//     img.addEventListener('load', function () {
+//       canvas.width = this.width;
+//       canvas.height = this.height;
+
+//       ctx.drawImage(this, 0, 0, this.width, this.height);
+
+//       loadImages(1);
+//     });
+//   }
+//   loadInitialImage();
+
+//   function loadImages (i) {
+//     var img;
+
+//     if (i >= sources.length) {
+//       draw();
+//       return;
+//     }
+
+//     img = new Image();
+//     img.setAttribute('src', sources[i]);
+//     img.addEventListener('load', function () {
+//       ctx.drawImage(this, 0, 0, this.width, this.height);
+
+//       loadImages(i + 1);
+//     });
+//   }
+
+//   function draw () {
+//     var img = new Image();
+
+//     img.src = canvas.toDataURL();
+
+//     document.body.appendChild(img);
+//   }
+
+  
+// }());
+
+(function () {
+  function romanNumber (number) {
+    var result = '';
+
+    result += (new Array(Math.floor(number / 1000) + 1)).join('M');
+    number %= 1000;
+
+    if (number >= 900) {
+      result += 'CM';
+      number -= 900;
+    } else if (number >= 400 && number < 500) {
+      result += 'CD';
+      number = 500 - number;
+    } else {
+      result += (new Array(Math.floor(number / 500) + 1)).join('D');
+      number %= 500;
+    }
+
+    if (number >= 90) {
+      result += 'XC';
+      number -= 90;
+    } else if (number >= 40 && number < 50) {
+      result += 'XL';
+      number = 50 - number;
+    } else {
+      result += (new Array(Math.floor(number / 100) + 1)).join('C');
+      number %= 100;
+    }
+
+    if (number === 9) {
+      result += 'IX';
+      number -= 9;
+    } else if (number === 4) {
+      result += 'IV';
+      number = 5 - number;
+    } else {
+      result += (new Array(Math.floor(number / 100) + 1)).join('L');
+      number %= 50;
+    }
+
+    result += (new Array(number + 1)).join('I');
+
+    return result;
+  }
+
+  console.log(romanNumber(3999));
+}());
