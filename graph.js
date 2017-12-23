@@ -32,7 +32,15 @@ ctx.strokeStyle = 'red';
   // ctx.arc(x, y + 40, 40, Math.PI * 1.4, Math.PI * 1.6);
   // ctx.stroke();
 
+  let yy = 90 - y, xx = (((FIRE) / 100) * (hw - hiw)) + hw + hiw - 90;
   
+  let hyp = Math.sqrt((yy * yy) + (xx * xx));
+  let alpha = Math.PI * 2 - (yy / hyp);
+  // console.log(Math.PI * 2 - alpha);
+  ctx.beginPath();
+  ctx.moveTo(hw, hh);
+  ctx.lineTo(hw + hyp * Math.cos(alpha), hh + hyp * Math.sin(alpha));
+  ctx.stroke();
   // ctx.beginPath();
   // ctx.moveTo(x, y);
   // ctx.bezierCurveTo(x + x / 2, hh / 2, x - x / 2, hh, (((FIRE) / 100) * (hw - hiw)) + hw + hiw, hh);
