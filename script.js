@@ -628,48 +628,115 @@
 // }());
 
 // (function () {
-//   // function check (n, symbol1, symbol2, symbol3) {
-//   //   switch (n) {
-//   //     case 1:
-//   //     case 2:
-//   //     case 3: {
-//   //       return (new Array(n + 1)).join(symbol1);
-//   //     }
-//   //     case 4: {
-//   //       return symbol1 + symbol2;
-//   //     }
-//   //     case 5: {
-//   //       return symbol2;
-//   //     }
-//   //     case 6:
-//   //     case 7:
-//   //     case 8: {
-//   //       return symbol2 + (new Array(n + 1)).join(symbol1);
-//   //     }
-//   //     case 9: {
-//   //       return symbol1 + symbol3;
-//   //     }
-//   //   }
-//   // }
+//   function romanNumber (number) {
+//     var result = '';
 
-//   // function romanNumber (number) {
-//   //   var result = '';
+//     result += (new Array(Math.floor(number / 1000) + 1)).join('M');
+//     number %= 1000;
 
-//   //   result += (new Array(Math.floor(number / 1000) + 1)).join('M');
-//   //   number %= 1000;
+//     if (number >= 900) {
+//       result += 'CM';
+//       number -= 900;
+//     } else if (number >= 400 && number < 500) {
+//       result += 'CD';
+//       number = 500 - number;
+//     } else {
+//       result += (new Array(Math.floor(number / 500) + 1)).join('D');
+//       number %= 500;
+//     }
 
-//   //   if (number % 500 >= 0) {
-//   //     result += check(+number.toString()[0], 'C', 'D', 'M');
-//   //     number -= 900;
-//   //   }
-//   //   console.log(number);
-//   //   if (number % 100 >= 0) {
-//   //     result += check(+number.toString()[0], 'L', 'C', 'D');
-//   //     number -= 100;
-//   //   }
+//     if (number >= 90) {
+//       result += 'XC';
+//       number -= 90;
+//     } else if (number >= 40 && number < 50) {
+//       result += 'XL';
+//       number = 50 - number;
+//     } else {
+//       result += (new Array(Math.floor(number / 100) + 1)).join('C');
+//       number %= 100;
+//     }
+
+//     if (number === 9) {
+//       result += 'IX';
+//       number -= 9;
+//     } else if (number === 4) {
+//       result += 'IV';
+//       number = 5 - number;
+//     } else {
+//       result += (new Array(Math.floor(number / 100) + 1)).join('L');
+//       number %= 50;
+//     }
+
+//     result += (new Array(number + 1)).join('I');
+
+//     return result;
+//   }
+
+//   console.log(romanNumber(3999));
+// }());
+(function () {
+  var nums = [1000, 500, 100, 50, 10, 5, 1],
+    letters = ['M', 'D', 'C', 'L', 'X', 'V', 'I'];
+
+
+  // sym1 - small, sym2 - medium, sym3 - big
+  function check (n, sym1, sym2, sym3) {
+    n = +n.toString()[0];
+
+    switch (n) {
+      case 1:
+      case 2:
+      case 3: {
+        return (new Array(n + 1)).join(sym1);
+      }
+      case 4: {
+        return sym1 + sym2;
+      }
+      case 5: {
+        return sym2;
+      }
+      case 6:
+      case 7:
+      case 8: {
+        return sym2 + (new Array(n - 5 + 1)).join(sym1);
+      }
+      case 9: {
+        return sym1 + sym3;
+      }
+      default: {
+        return sym3;
+      }
+    }
+  }
+
+  function toRoman (n) {
+    var result = '';
+
+    if (n <= 10) {
+      return check(n, 'I', 'V', 'X');
+    }
+
+    if (n >= 1000) {
+      result += check(n - (n % 1000), 'M');
+    }
+    n = n - (n - (n % 1000));
+
+    for (let i = 1; i < nums.length; i += 1) {
+      if (n <= 10) {
+        result += check(n, 'I', 'V', 'X');
+        break;
+      } else {
+        if (n % nums[i] !== n) {
+          result += check(n - (n % nums[i]), letters[i + 2], letters[i + 1], letters[i]);
+          n = n - (n - (n % nums[i]));
+        }
+      }
+    }
 
 //   //   return result;
 //   // }
+    return result;
+  }
 
-//   // console.log(romanNumber(3999));
+  console.log(toRoman(3999));
 // }());
