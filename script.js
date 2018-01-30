@@ -627,50 +627,49 @@
   
 // }());
 
-(function () {
-  function romanNumber (number) {
-    var result = '';
+// (function () {
+//   // function check (n, symbol1, symbol2, symbol3) {
+//   //   switch (n) {
+//   //     case 1:
+//   //     case 2:
+//   //     case 3: {
+//   //       return (new Array(n + 1)).join(symbol1);
+//   //     }
+//   //     case 4: {
+//   //       return symbol1 + symbol2;
+//   //     }
+//   //     case 5: {
+//   //       return symbol2;
+//   //     }
+//   //     case 6:
+//   //     case 7:
+//   //     case 8: {
+//   //       return symbol2 + (new Array(n + 1)).join(symbol1);
+//   //     }
+//   //     case 9: {
+//   //       return symbol1 + symbol3;
+//   //     }
+//   //   }
+//   // }
 
-    result += (new Array(Math.floor(number / 1000) + 1)).join('M');
-    number %= 1000;
+//   // function romanNumber (number) {
+//   //   var result = '';
 
-    if (number >= 900) {
-      result += 'CM';
-      number -= 900;
-    } else if (number >= 400 && number < 500) {
-      result += 'CD';
-      number = 500 - number;
-    } else {
-      result += (new Array(Math.floor(number / 500) + 1)).join('D');
-      number %= 500;
-    }
+//   //   result += (new Array(Math.floor(number / 1000) + 1)).join('M');
+//   //   number %= 1000;
 
-    if (number >= 90) {
-      result += 'XC';
-      number -= 90;
-    } else if (number >= 40 && number < 50) {
-      result += 'XL';
-      number = 50 - number;
-    } else {
-      result += (new Array(Math.floor(number / 100) + 1)).join('C');
-      number %= 100;
-    }
+//   //   if (number % 500 >= 0) {
+//   //     result += check(+number.toString()[0], 'C', 'D', 'M');
+//   //     number -= 900;
+//   //   }
+//   //   console.log(number);
+//   //   if (number % 100 >= 0) {
+//   //     result += check(+number.toString()[0], 'L', 'C', 'D');
+//   //     number -= 100;
+//   //   }
 
-    if (number === 9) {
-      result += 'IX';
-      number -= 9;
-    } else if (number === 4) {
-      result += 'IV';
-      number = 5 - number;
-    } else {
-      result += (new Array(Math.floor(number / 100) + 1)).join('L');
-      number %= 50;
-    }
+//   //   return result;
+//   // }
 
-    result += (new Array(number + 1)).join('I');
-
-    return result;
-  }
-
-  console.log(romanNumber(3999));
-}());
+//   // console.log(romanNumber(3999));
+// }());
